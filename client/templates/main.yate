@@ -15,10 +15,15 @@ match .* slide {
 
 match / control-panel {
     log(.)
+    current = if .online {
+        .current
+    } else {
+        .offlineCurrent
+    }
     <div class="control-panel">
         <span class="slides-stat">
             <span class="current-slide">
-                (.current + 1)
+                (current + 1)
             </span>
             '&nbsp;'
             "of"
@@ -35,6 +40,14 @@ match / control-panel {
                 'SLAVE'
             }
         </span>
+        <span class="sep">&nbsp;|&nbsp;</span>
+        <a class="connectivity" href="#">
+            if .online {
+                @class += " online"
+            } else {
+                @class += " offline"
+            }
+        </a>
     </div>
 }
 

@@ -25,6 +25,7 @@ body
 
   & .sep
     color: rgba(255,255,255,.4)
+    margin: 0 5px
 
 
   & .slides-stat
@@ -33,12 +34,26 @@ body
 
     color: rgba(255,255,255,.7)
 
-    margin-right: 5px
+  & .connectivity
+    width: 18px;
+    height: 18px
+    border-radius: 100%
+    display: inline-block
+    border: 1px grey solid
+    vertical-align: middle
+
+    &.online
+      background-color: green
+
+    &.offline
+      background-color: red
 
 
-  & .mode
-    margin: 0 5px
 
+
+  /*& .mode
+    //margin: 0 5px
+  */
 
 .mode-prompt 
   background: rgba(0,0,0,.7)

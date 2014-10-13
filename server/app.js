@@ -143,7 +143,6 @@ function whenSlidesReady() {
 }
 
 var slidesDeferred = new vow.Deferred();
-var clientId = 0;
 var currentSlide = 0;
 var connections = [];
 

@@ -10,6 +10,11 @@
     }
 
     function moveSlide(next) {
+        // offline
+        if (!state.online && typeof next === 'boolean') {
+            next = state.offlineCurrent + (next ? 1 : -1);
+        }
+
         if (next < 0) {
             next = 0;
         }
@@ -18,7 +23,12 @@
             next = state.slides.length;
         }
 
-        state.current = next;
+        if (state.online) {
+            state.current = next;
+        } else {
+            state.offlineCurrent = next;
+        }
+
 
         $('.slides').css('margin-top', -100 * next + 'vh');
     }
@@ -64,6 +74,7 @@
         switch(envelope.event) {
         case 'slides':
             state = envelope.data;
+            state.online = true;
             var html = yr.run('main', envelope.data);
             $('body').empty().append(html);
 
@@ -73,7 +84,13 @@
 
         case 'move':
             var next = envelope.data.next;
-            moveSlide(next);
+
+            if (state.online) {
+                moveSlide(next);
+            } else {
+                state.current = next;
+            }
+
             switchMode(envelope.data.master);
             renderPanel();
             break;
@@ -117,7 +134,7 @@
             break;
         }
 
-        if (!state.master && !waitingForDecision && direction) {
+        if (state.online && !state.master && !waitingForDecision && direction) {
             console.warn('SLAVE mode');
             var $modePrompt = $('.mode-prompt');
             if (!$modePrompt.length) {
@@ -155,7 +172,40 @@
             };
         }
 
-        send('move', dataToSend);
+        if (state.online) {
+            send('move', dataToSend);
+        } else if (state.offlineCurrent) {
+            moveSlide(direction === 'next');
+            renderPanel();
+        }
+
+    });
+
+    function setConnectivity(online) {
+        state.online = online;
+        if (!online) {
+            state.offlineCurrent = state.current;
+        } else {
+            state.offlineCurrent = null;
+            renderPanel();
+            moveSlide(state.current);
+        }
+
+
+    }
+
+    $(document).on('click', '.connectivity', function(e) {
+        var $target = $(e.currentTarget);
+        var online = true;
+        if ($target.is('.online')) {
+            online = false;
+        }
+
+        $target.toggleClass('online', online).toggleClass('offline', !online);
+
+        setConnectivity(online);
+
+        return false;
     });
 
 })();
