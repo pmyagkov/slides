@@ -1,0 +1,49 @@
+match / {
+    log(.)
+    <ul class="slides">
+        apply .slides slide
+    </ul>
+
+    apply . control-panel
+}
+
+match .* slide {
+    <li>
+        @style="background-image: url(../" + . + ")"
+    </li>
+}
+
+match / control-panel {
+    log(.)
+    <div class="control-panel">
+        <span class="slides-stat">
+            <span class="current-slide">
+                (.current + 1)
+            </span>
+            '&nbsp;'
+            "of"
+            '&nbsp;'
+            count(.slides)
+        </span>
+        <span class="sep">&nbsp;|&nbsp;</span>
+        <span class="mode">
+            if .master {
+                @class += " master"
+                'MASTER'
+            } else {
+                @class += " slave"
+                'SLAVE'
+            }
+        </span>
+    </div>
+}
+
+match / mode-prompt {
+    <div class="mode-prompt">
+        "You're in SLAVE mode."
+        <br></br>
+        "To take control press ENTER."
+        <br></br>
+        "Otherwise press ESC or wait for 2 seconds."
+    </div>
+}
