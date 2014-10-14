@@ -1,4 +1,6 @@
 (function() {
+    var _  = require('lodash');
+
     var MODES = {
         SLAVE: 'slave',
         MASTER: 'master'
@@ -31,6 +33,8 @@
 
 
         $('.slides').css('margin-top', -100 * next + 'vh');
+
+        initSlideScrolling();
     }
 
     function switchMode(master) {
@@ -174,7 +178,7 @@
 
         if (state.online) {
             send('move', dataToSend);
-        } else if (state.offlineCurrent) {
+        } else if (state.offlineCurrent !== null) {
             moveSlide(direction === 'next');
             renderPanel();
         }
@@ -194,6 +198,28 @@
 
     }
 
+    var $w = $(window);
+    var slideBgX = 50;
+    var slideBgY = 0;
+    var $slide;
+
+    function initSlideScrolling() {
+        slideBgX = 50;
+        slideBgY = 0;
+        $slide = $('.slides li').eq(getCurrentSlide());
+        $slide.css({
+            'background-position-x': 'none',
+            'background-position-y': 'none'
+        })
+    }
+
+    function getCurrentSlide() {
+        return state.online ? state.current : state.offlineCurrent;
+    }
+
+    var intervalX;
+    var intervalY;
+
     $(document).on('click', '.connectivity', function(e) {
         var $target = $(e.currentTarget);
         var online = true;
@@ -206,6 +232,58 @@
         setConnectivity(online);
 
         return false;
-    });
+    }).on('mousemove', _.throttle(function(e) {
+        var ww = $w.width();
+        var wh = $w.height();
+
+        console.log('e', e);
+
+        clearInterval(intervalY);
+        clearInterval(intervalX);
+
+        intervalY = setInterval(function() {
+
+            if (wh / 2 < e.clientY) {
+                slideBgY += 10;
+                if (slideBgY > 100) {
+                    slideBgY = 100;
+                    clearInterval(intervalY);
+                }
+                $slide.css('background-position-y', slideBgY + '%');
+            }
+
+            if (wh / 2 > e.clientY) {
+                slideBgY -= 10;
+                if (slideBgY < 0) {
+                    slideBgY = 0;
+                    clearInterval(intervalY);
+                }
+                $slide.css('background-position-y', slideBgY + '%');
+            }
+
+        }, 100);
+
+        intervalX = setInterval(function() {
+            if (ww / 2 < e.clientX) {
+                slideBgX += 10;
+                if (slideBgX > 100) {
+                    slideBgX = 100;
+                    clearInterval(intervalX);
+                }
+                $slide.css('background-position-X', slideBgX + '%');
+            }
+
+            if (ww / 2 > e.clientX) {
+                slideBgX -= 10;
+                if (slideBgX < 0) {
+                    slideBgX = 0;
+                    clearInterval(intervalX);
+                }
+                $slide.css('background-position-x', slideBgX + '%');
+            }
+        }, 100);
+
+
+    }, 100));
 
 })();
