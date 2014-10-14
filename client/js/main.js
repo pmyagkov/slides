@@ -233,6 +233,10 @@
 
         return false;
     }).on('mousemove', _.throttle(function(e) {
+        if (!$slide) {
+            return;
+        }
+
         var ww = $w.width();
         var wh = $w.height();
 
