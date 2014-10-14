@@ -77,6 +77,13 @@ var diskData;
 var slides = [];
 
 var needToUpdateSlides = false;
+console.log('ARGS', process.argv);
+if (process.argv.length === 3 && (process.argv[2] === '--update' || process.argv[2] === '-u')) {
+    needToUpdateSlides = true;
+}
+
+console.log('UPDATE SLIDES', needToUpdateSlides);
+
 var masterConnection;
 
 function downloadSlides() {
