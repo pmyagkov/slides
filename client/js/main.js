@@ -253,7 +253,7 @@
                     slideBgY = 100;
                     clearInterval(intervalY);
                 }
-                $slide.css('background-position-y', slideBgY + '%');
+                $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
             }
 
             if (wh / 2 > e.clientY) {
@@ -262,7 +262,7 @@
                     slideBgY = 0;
                     clearInterval(intervalY);
                 }
-                $slide.css('background-position-y', slideBgY + '%');
+                $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
             }
 
         }, 100);
@@ -274,7 +274,7 @@
                     slideBgX = 100;
                     clearInterval(intervalX);
                 }
-                $slide.css('background-position-X', slideBgX + '%');
+$slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
             }
 
             if (ww / 2 > e.clientX) {
@@ -283,7 +283,7 @@
                     slideBgX = 0;
                     clearInterval(intervalX);
                 }
-                $slide.css('background-position-x', slideBgX + '%');
+$slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
             }
         }, 100);
 

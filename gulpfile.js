@@ -22,6 +22,11 @@ gulp.task('styl', function() {
         .pipe(gulp.dest('build/'));
 });
 
+gulp.task('yate-runtime', function() {
+    return gulp.src('node_modules/yate/lib/runtime.js')
+	.pipe(gulp.dest('./build/js'));
+});
+
 gulp.task('js', ['yate'], function() {
     return gulp.src('client/js/main.js')
         .pipe(browserify({
@@ -51,7 +56,7 @@ gulp.task('watch', ['default'], function() {
     gulp.watch('client/*.styl', ['styl']);
 });
 
-gulp.task('default', ['html', 'js', 'styl'], function() {
+gulp.task('default', ['html', 'js', 'styl', 'yate-runtime'], function() {
     console.log('default');
 });
 

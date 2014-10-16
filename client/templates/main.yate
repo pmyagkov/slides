@@ -9,7 +9,7 @@ match / {
 
 match .* slide {
     <li>
-        @style="background-image: url(../" + . + ")"
+        @style="background-image: url(../slides/" + . + ")"
     </li>
 }
 

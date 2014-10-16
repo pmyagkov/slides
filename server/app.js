@@ -9,7 +9,7 @@ var fs = require('fs');
 var CONFIG = {
     'oauthToken': '6b151a5efb0945e49c8ee0358b9eb1b9',
     'diskFolder': 'Slides',
-    'localFolder': 'slides'
+    'localFolder': 'build/slides'
 };
 
 function buf2json(buf){
@@ -103,7 +103,7 @@ function downloadSlides() {
                             slides.push({
                                 name: item.name,
                                 href: info.href,
-                                path: path
+                                path: item.name 
                             });
 
                             def.resolve();
@@ -164,8 +164,11 @@ if (needToUpdateSlides) {
                 return CONFIG.localFolder + '/' + file;
             }));
             slides = dir.map(function(file) {
-                return CONFIG.localFolder + '/' + file;
+                return file;
             });
+
+	    console.log('CLIENT SLIDES', slides);
+
             renewSlidesPromise(slides);
         }
 
