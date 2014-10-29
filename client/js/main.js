@@ -220,74 +220,91 @@
     var intervalX;
     var intervalY;
 
-    $(document).on('click', '.connectivity', function(e) {
-        var $target = $(e.currentTarget);
-        var online = true;
-        if ($target.is('.online')) {
-            online = false;
-        }
+    var bgSize = 'cover';
 
-        $target.toggleClass('online', online).toggleClass('offline', !online);
-
-        setConnectivity(online);
-
-        return false;
-    }).on('mousemove', _.throttle(function(e) {
-        if (!$slide) {
-            return;
-        }
-
-        var ww = $w.width();
-        var wh = $w.height();
-
-        console.log('e', e);
-
-        clearInterval(intervalY);
-        clearInterval(intervalX);
-
-        intervalY = setInterval(function() {
-
-            if (wh / 2 < e.clientY) {
-                slideBgY += 10;
-                if (slideBgY > 100) {
-                    slideBgY = 100;
-                    clearInterval(intervalY);
-                }
-                $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
+    $(document)
+        .on('click', '.connectivity', function(e) {
+            var $target = $(e.currentTarget);
+            var online = true;
+            if ($target.is('.online')) {
+                online = false;
             }
 
-            if (wh / 2 > e.clientY) {
-                slideBgY -= 10;
-                if (slideBgY < 0) {
-                    slideBgY = 0;
-                    clearInterval(intervalY);
-                }
-                $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
+            $target.toggleClass('online', online).toggleClass('offline', !online);
+
+            setConnectivity(online);
+
+            //return false;
+        })
+        .on('click', '.slides li', function(e) {
+            bgSize = bgSize === 'cover' ? 'contain' : 'cover';
+
+            var cssObj = {'background-size': bgSize}
+            if (bgSize === 'contain') {
+                cssObj['background-position'] = '50% 0%';
             }
 
-        }, 100);
-
-        intervalX = setInterval(function() {
-            if (ww / 2 < e.clientX) {
-                slideBgX += 10;
-                if (slideBgX > 100) {
-                    slideBgX = 100;
-                    clearInterval(intervalX);
-                }
-$slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
+            $('.slides li').css(cssObj);
+        })
+        .on('mousemove', _.throttle(function(e) {
+            if (!$slide || bgSize === 'contain') {
+                return;
             }
 
-            if (ww / 2 > e.clientX) {
-                slideBgX -= 10;
-                if (slideBgX < 0) {
-                    slideBgX = 0;
-                    clearInterval(intervalX);
+            var NO_SCROLL_AREA_WIDTH = 200;
+
+            var ww = $w.width();
+            var wh = $w.height();
+
+            console.log('e', e);
+
+            clearInterval(intervalY);
+            clearInterval(intervalX);
+
+            intervalY = setInterval(function() {
+
+                if (wh / 2 < e.clientY - NO_SCROLL_AREA_WIDTH) {
+                    slideBgY += 10;
+                    if (slideBgY > 100) {
+                        slideBgY = 100;
+                        clearInterval(intervalY);
+                    }
+                    $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
                 }
-$slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
-            }
-        }, 100);
+
+                if (wh / 2 > e.clientY + NO_SCROLL_AREA_WIDTH) {
+                    slideBgY -= 10;
+                    if (slideBgY < 0) {
+                        slideBgY = 0;
+                        clearInterval(intervalY);
+                    }
+                    $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
+                }
+
+            }, 100);
+
+            intervalX = setInterval(function() {
+                if (ww / 2 < e.clientX - NO_SCROLL_AREA_WIDTH) {
+                    slideBgX += 10;
+                    if (slideBgX > 100) {
+                        slideBgX = 100;
+                        clearInterval(intervalX);
+                    }
+                    $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
+                }
+
+                if (ww / 2 > e.clientX + NO_SCROLL_AREA_WIDTH) {
+                    slideBgX -= 10;
+                    if (slideBgX < 0) {
+                        slideBgX = 0;
+                        clearInterval(intervalX);
+                    }
+                    $slide.css('background-position', slideBgX + '%' + ' ' + slideBgY + '%');
+                }
+            }, 100);
 
 
-    }, 100));
+        }, 100)
+    );
 
 })();
