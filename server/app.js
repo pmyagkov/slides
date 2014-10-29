@@ -7,7 +7,7 @@ var fs = require('fs');
 // https://oauth.yandex.ru/authorize?response_type=token&client_id=f13cc55f54ec4a0abc8f593236280215
 
 var CONFIG = {
-    'oauthToken': 'dfec2213aaf5461fba121e296fa783b8',
+    'oauthToken': 'e1554ff382d040388935adaf286abad9',
     'diskFolder': 'Slides',
     'localFolder': 'build/slides'
 };
