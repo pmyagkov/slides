@@ -86,44 +86,67 @@ console.log('UPDATE SLIDES', needToUpdateSlides);
 
 var masterConnection;
 
+function removeSlides() {
+    console.log('REMOVING OLD FILES');
+
+    var promises = [];
+
+    fs.readdir(CONFIG.localFolder, function(err, files) {
+        if (!err) {
+            files.forEach(function(file) {
+                var def = new vow.Deferred();
+                promises.push(def.promise());
+                fs.unlink(CONFIG.localFolder + '/' + file, function(err) {
+                    def.resolve();
+                })
+            });
+        }
+    })
+
+    return vow.all(promises);
+}
+
 function downloadSlides() {
     request(getRequestInfo('meta'), function(error, response, body) {
         if (!error && response.statusCode == 200) {
             diskData = JSON.parse(body);
             var items = diskData['_embedded'].items;
-            var promises = items.map(function(item) {
 
-                var def = new vow.Deferred();
+            removeSlides().then(function() {
+                var promises = items.map(function(item) {
 
-                request(getRequestInfo('resource', {name: item.name}), function(err, res, body) {
-                    if (!err && response.statusCode == 200) {
-                        var info = JSON.parse(body);
+                    var def = new vow.Deferred();
 
-                        downloadFile(item.name, info.href).then(function(path) {
-                            slides.push({
-                                name: item.name,
-                                href: info.href,
-                                path: item.name 
+                    request(getRequestInfo('resource', {name: item.name}), function(err, res, body) {
+                        if (!err && response.statusCode == 200) {
+                            var info = JSON.parse(body);
+
+                            downloadFile(item.name, info.href).then(function(path) {
+                                slides.push({
+                                    name: item.name,
+                                    href: info.href,
+                                    path: item.name
+                                });
+
+                                def.resolve();
                             });
 
-                            def.resolve();
-                        });
+                        } else {
+                            def.reject();
+                            console.error(err);
+                        }
 
-                    } else {
-                        def.reject();
-                        console.error(err);
-                    }
+                    });
 
+                    return def.promise();
                 });
 
-                return def.promise();
-            });
+                vow.all(promises).then(function() {
+                    renewSlidesPromise(sortSlidesForClient(slides));
 
-            vow.all(promises).then(function() {
-                renewSlidesPromise(sortSlidesForClient(slides));
-
-                console.log('SLIDES', slides);
-            });
+                    console.log('SLIDES', slides);
+                });
+            })
         }
     });
 }
@@ -167,7 +190,7 @@ if (needToUpdateSlides) {
                 return file;
             });
 
-	    console.log('CLIENT SLIDES', slides);
+	        console.log('CLIENT SLIDES', slides);
 
             renewSlidesPromise(slides);
         }
