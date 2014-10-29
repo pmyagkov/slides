@@ -101,7 +101,7 @@ function removeSlides() {
                 })
             });
         }
-    })
+    });
 
     return vow.all(promises);
 }

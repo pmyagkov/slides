@@ -53,10 +53,8 @@
 
     var $ = require('jquery');
 
-    var port = '1400';
-
     var pageUrl = /^https?:\/\/([^:/]*)[:/]/.exec(location.href)[1];
-    var url = "ws://" + pageUrl + ":" + port;// + "/game";
+    var url = "ws://" + pageUrl + "/socket";
 
     var socket  = new WebSocket(url);
 
